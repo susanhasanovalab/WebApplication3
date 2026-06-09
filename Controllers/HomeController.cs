@@ -1,32 +1,53 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using WebApplication3.DAL;
 using WebApplication3.Models;
-
 namespace WebApplication3.Controllers
 {
-    public class HomeController : Controller
+   
+public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
-
         public IActionResult Index()
         {
             return View();
         }
-
-        public IActionResult Privacy()
+        // To create View of this Action result
+        public ActionResult create()
         {
             return View();
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        // Specify the type of attribute i.e.
+        // it will add the record to the database
+        [HttpPost]
+        public ActionResult create(Product model)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            // To open a connection to the database
+            using (var context = new AppDbContext()) // Ensure ApplicationDbContext is correctly defined in your project
+            {
+                // Cast the Products property to the correct type
+                var products = context.Products as DbSet<Product>;
+                if (products == null)
+                {
+                    throw new InvalidOperationException("The Products property is not configured correctly in AppDbContext.");
+                }
+
+                // Add data to the particular table
+                products.Add(model);
+
+                // Save the changes
+                context.SaveChanges();
+            }
+            string message = "Created the record successfully";
+
+            // To display the message on the screen
+            // after the record is created successfully
+            ViewBag.Message = message;
+
+            // Write @Viewbag.Message in the created
+            // view at the place where you want to
+            // display the message
+            return View();
         }
     }
 }

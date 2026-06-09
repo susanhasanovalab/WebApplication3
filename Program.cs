@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 
 namespace WebApplication3
@@ -11,8 +12,12 @@ namespace WebApplication3
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
-        
 
+            // Fixing CS1002 and CS1003 errors by correcting the syntax
+            builder.Services.AddDbContext<DAL.AppDbContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+            });
 
             var app = builder.Build();
 
@@ -38,8 +43,6 @@ namespace WebApplication3
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
-
-            
             app.Run();
         }
     }
