@@ -32,12 +32,14 @@ namespace WebApplication3
             app.UseAuthorization();
 
             app.MapControllerRoute(
+                name: "areas",
+                pattern: "{area:exists}/{controller=DashBoard}/{action=Index}/{id?}");
+
+            app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
-            app.MapControllerRoute(
-                name: "areas",
-                pattern: "{ Areas: exists}/ {pattern: DashBoard}/{action=Index}/{id?}");
+            
             app.Run();
         }
     }
